@@ -14,6 +14,9 @@ class AppRoutes {
   /// Create session route.
   static const String createSession = '/create-session';
 
+  /// Session result route.
+  static const String sessionResult = '/create-session/session-result';
+
   /// Routes that should bounce authenticated users back to home.
   static const Set<String> authRedirectBlock = {splash, auth};
 }

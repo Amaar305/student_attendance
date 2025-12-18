@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:student_attendance/app/app.dart';
 import 'package:student_attendance/features/auth/auth.dart';
-import 'package:student_attendance/features/create_session/create_session.dart';
+import 'package:student_attendance/features/session/session.dart';
 import 'package:student_attendance/features/home/home.dart';
 import 'package:student_attendance/features/splash/splash.dart';
 
@@ -59,6 +59,14 @@ class AppRouter {
       GoRoute(
         path: AppRoutes.createSession,
         builder: (context, state) => const CreateSessionPage(),
+
+        routes: [
+          GoRoute(
+            path: 'session-result',
+            name: 'session-result',
+            builder: (context, state) => const SessionResultPage(),
+          ),
+        ],
       ),
     ],
   );

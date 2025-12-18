@@ -23,8 +23,8 @@ class HomeLecturerQuickActions extends StatelessWidget {
 
         const Expanded(
           child: _LecturerQuickAction(
-            icon: Icons.qr_code_2_outlined,
-            label: 'Generate QR',
+            icon: Icons.sensors_sharp,
+            label: 'Active Session',
           ),
         ),
 

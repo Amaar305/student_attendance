@@ -1,5 +1,6 @@
 import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class CreateSessionPage extends StatelessWidget {
   const CreateSessionPage({super.key});
@@ -97,8 +98,7 @@ class _CreateSessionViewState extends State<CreateSessionView> {
                   hintText: 'Select course',
                   initialValue: _selectedCourse,
                   prefixIcon: const Icon(Icons.menu_book_outlined),
-                  onChanged: (value) =>
-                      setState(() => _selectedCourse = value),
+                  onChanged: (value) => setState(() => _selectedCourse = value),
                 ),
                 AppTextField.underlineBorder(
                   hintText: 'Select date',
@@ -125,8 +125,9 @@ class _CreateSessionViewState extends State<CreateSessionView> {
                     Expanded(
                       child: AppTextField.underlineBorder(
                         hintText: 'End time',
-                        prefixIcon:
-                            const Icon(Icons.access_time_filled_outlined),
+                        prefixIcon: const Icon(
+                          Icons.access_time_filled_outlined,
+                        ),
                         readOnly: true,
                         textController: _endTimeController,
                         onTap: () => _selectTime(
@@ -152,7 +153,9 @@ class _CreateSessionViewState extends State<CreateSessionView> {
                   borderRadius: BorderRadius.circular(AppSpacing.md),
                 ),
               ),
-              onPressed: () {},
+              onPressed: () {
+                context.pushNamed('session-result');
+              },
             ),
           ],
         ),
