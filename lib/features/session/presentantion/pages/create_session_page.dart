@@ -1,165 +1,79 @@
 import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:student_attendance/app/app.dart';
+import 'package:student_attendance/features/session/session.dart';
 
 class CreateSessionPage extends StatelessWidget {
   const CreateSessionPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const CreateSessionView();
+    return BlocProvider(
+      create: (context) => SessionCubit(
+        user: context.read<AppCubit>().state.user!,
+        buildSessionQrPayloadUseCase: getIt(),
+        closeSessionUseCase: getIt(),
+        createOrGetOpenSessionUseCase: getIt(),
+        fetchLecturerCoursesUseCase: getIt(),
+      )..fetchLecturerCourses(),
+      child: const CreateSessionView(),
+    );
   }
 }
 
-class CreateSessionView extends StatefulWidget {
+class CreateSessionView extends StatelessWidget {
   const CreateSessionView({super.key});
 
   @override
-  State<CreateSessionView> createState() => _CreateSessionViewState();
+  Widget build(BuildContext context) {
+    return BlocListener<SessionCubit, SessionState>(
+      listenWhen: (previous, current) =>
+          previous.status != current.status ||
+          previous.message != current.message,
+      listener: (context, state) {
+        if (state.status.isError && state.message.isNotEmpty) {
+          openSnackbar(SnackbarMessage.error(title: state.message));
+        }
+      },
+      child: AppScaffold(
+        appBar: AppBar(title: Text('Create Session')),
+        body: AppConstrainedScrollView(
+          padding: EdgeInsets.all(AppSpacing.lg),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                spacing: AppSpacing.xlg,
+                children: const [
+                  CreateSessionCourseField(),
+                  CreateSessionTopicField(),
+                  CreateSessionDateField(),
+                  _CreateSessionTimeAndLateRow(),
+                ],
+              ),
+              const CreateSessionButton(),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }
 
-class _CreateSessionViewState extends State<CreateSessionView> {
-  final _courses = const [
-    'CSC101 - Intro to Programming',
-    'MTH201 - Calculus II',
-    'PHY110 - Mechanics',
-  ];
-
-  final _dateController = TextEditingController();
-  final _startTimeController = TextEditingController();
-  final _endTimeController = TextEditingController();
-
-  String? _selectedCourse;
-  DateTime? _selectedDate;
-  TimeOfDay? _startTime;
-  TimeOfDay? _endTime;
-
-  @override
-  void dispose() {
-    _dateController.dispose();
-    _startTimeController.dispose();
-    _endTimeController.dispose();
-    super.dispose();
-  }
-
-  Future<void> _selectDate() async {
-    final now = DateTime.now();
-    final picked = await showDatePicker(
-      context: context,
-      initialDate: _selectedDate ?? now,
-      firstDate: now.subtract(const Duration(days: 365)),
-      lastDate: now.add(const Duration(days: 365)),
-    );
-    if (picked == null) return;
-    setState(() {
-      _selectedDate = picked;
-      _dateController.text =
-          '${picked.year}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}';
-    });
-  }
-
-  Future<void> _selectTime({
-    required TextEditingController controller,
-    required bool isStartTime,
-  }) async {
-    final picked = await showTimePicker(
-      context: context,
-      initialTime: isStartTime
-          ? (_startTime ?? TimeOfDay.now())
-          : (_endTime ?? TimeOfDay.now()),
-    );
-    if (picked == null) return;
-    setState(() {
-      if (isStartTime) {
-        _startTime = picked;
-      } else {
-        _endTime = picked;
-      }
-      controller.text = picked.format(context);
-    });
-  }
+class _CreateSessionTimeAndLateRow extends StatelessWidget {
+  const _CreateSessionTimeAndLateRow();
 
   @override
   Widget build(BuildContext context) {
-    return AppScaffold(
-      appBar: AppBar(title: Text('Create Session')),
-      body: AppConstrainedScrollView(
-        padding: EdgeInsets.all(AppSpacing.lg),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              spacing: AppSpacing.xlg,
-              children: [
-                AppDropdownField.underlineBorder(
-                  items: _courses,
-                  hintText: 'Select course',
-                  initialValue: _selectedCourse,
-                  prefixIcon: const Icon(Icons.menu_book_outlined),
-                  onChanged: (value) => setState(() => _selectedCourse = value),
-                ),
-                AppTextField.underlineBorder(
-                  hintText: 'Select date',
-                  prefixIcon: const Icon(Icons.event_outlined),
-                  readOnly: true,
-                  textController: _dateController,
-                  onTap: _selectDate,
-                ),
-                Row(
-                  spacing: AppSpacing.lg,
-                  children: [
-                    Expanded(
-                      child: AppTextField.underlineBorder(
-                        hintText: 'Start time',
-                        prefixIcon: const Icon(Icons.access_time_rounded),
-                        readOnly: true,
-                        textController: _startTimeController,
-                        onTap: () => _selectTime(
-                          controller: _startTimeController,
-                          isStartTime: true,
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: AppTextField.underlineBorder(
-                        hintText: 'End time',
-                        prefixIcon: const Icon(
-                          Icons.access_time_filled_outlined,
-                        ),
-                        readOnly: true,
-                        textController: _endTimeController,
-                        onTap: () => _selectTime(
-                          controller: _endTimeController,
-                          isStartTime: false,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            AppButton(
-              text: 'Create Session',
-              width: double.infinity,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.deepBlue,
-                padding: const EdgeInsets.symmetric(
-                  vertical: AppSpacing.md,
-                  horizontal: AppSpacing.lg,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(AppSpacing.md),
-                ),
-              ),
-              onPressed: () {
-                context.pushNamed('session-result');
-              },
-            ),
-          ],
-        ),
-      ),
+    return Row(
+      spacing: AppSpacing.lg,
+      children: const [
+        Expanded(child: CreateSessionStartTimeField()),
+        Expanded(child: CreateSessionLateMinutesField()),
+      ],
     );
   }
 }

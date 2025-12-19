@@ -1,6 +1,5 @@
 import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
-import 'package:student_attendance/features/session/presentantion/widgets/session_result_actions.dart';
 import 'package:student_attendance/features/session/session.dart';
 
 class SessionResultPage extends StatelessWidget {
