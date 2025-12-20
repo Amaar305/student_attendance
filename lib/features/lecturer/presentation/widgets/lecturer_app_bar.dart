@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:student_attendance/app/cubit/app_cubit.dart';
 
-class HomeLecturerAppBar extends StatelessWidget {
-  const HomeLecturerAppBar({super.key});
+class LecturerAppBar extends StatelessWidget {
+  const LecturerAppBar({super.key});
 
   @override
   Widget build(BuildContext context) {

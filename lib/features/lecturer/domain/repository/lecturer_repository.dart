@@ -1,0 +1,24 @@
+import 'package:fpdart/fpdart.dart';
+import 'package:shared/shared.dart';
+
+abstract interface class LecturerRepository {
+  Stream<Either<Failure, List<Course>>> watchLecturerCourses({
+    required String lecturerId,
+  });
+
+  Stream<Either<Failure, int>> watchSessionAttendanceCount({
+    required String sessionId,
+  });
+
+  Stream<Either<Failure, List<Session>>> watchCourseSessions({
+    required String courseId,
+  });
+
+  Stream<Either<Failure, int>> watchCourseStudentCount({
+    required String courseId,
+  }); // preferred
+
+  Future<Either<Failure, int>> getCourseStudentCount({
+    required String courseId,
+  });
+}

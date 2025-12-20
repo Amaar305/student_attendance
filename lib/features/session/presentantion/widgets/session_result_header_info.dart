@@ -1,9 +1,11 @@
 import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:student_attendance/core/common/widgets/app_container.dart';
+import 'package:student_attendance/features/session/session.dart';
 
 class SessionResultHeaderInfo extends StatelessWidget {
-  const SessionResultHeaderInfo({super.key});
+  const SessionResultHeaderInfo({super.key, required this.sessionResult});
+  final SessionResult sessionResult;
 
   @override
   Widget build(BuildContext context) {
@@ -13,21 +15,21 @@ class SessionResultHeaderInfo extends StatelessWidget {
         spacing: AppSpacing.xs,
         children: [
           Text(
-            'CSC1211: Intro to Programming',
+            '${sessionResult.course.code}: ${sessionResult.course.name}',
             style: context.titleMedium?.copyWith(
               fontWeight: AppFontWeight.semiBold,
               color: AppColors.primaryDarkBlue,
             ),
           ),
           Text(
-            'Lecture5: Data Structures',
+            'Lecture: ${sessionResult.session.topic}',
             style: context.bodyMedium?.copyWith(
               color: AppColors.emphasizeGrey,
               height: 1.4,
             ),
           ),
           Text(
-            'ID: A4B7-9C1D',
+            'ID: ${sessionResult.session.id}',
             style: context.bodyMedium?.copyWith(
               color: AppColors.emphasizeGrey,
               height: 1.4,

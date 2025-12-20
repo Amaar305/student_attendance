@@ -2,11 +2,12 @@ import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:student_attendance/core/common/widgets/app_container.dart';
 
-class HomeCourseTile extends StatelessWidget {
-  const HomeCourseTile({
+class LecturerCourseTile extends StatelessWidget {
+  const LecturerCourseTile({
     super.key,
     required this.title,
     required this.studentCount,
+    required this.onTap,
     this.icon = Icons.computer_rounded,
     this.ctaLabel = 'View details',
   });
@@ -15,27 +16,31 @@ class HomeCourseTile extends StatelessWidget {
   final int studentCount;
   final IconData icon;
   final String ctaLabel;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
     const primary = AppColors.primaryDarkBlue;
-    return AppContainer(
-      asTitle: true,
-      padding: EdgeInsets.all(AppSpacing.md),
-      child: Row(
-        spacing: AppSpacing.md,
-        children: [
-          _CourseIcon(icon: icon, primary: primary),
-          Expanded(
-            child: _CourseInfo(
-              title: title,
-              studentCount: studentCount,
-              ctaLabel: ctaLabel,
-              primary: primary,
+    return Tappable.scaled(
+      onTap: onTap,
+      child: AppContainer(
+        asTitle: true,
+        padding: EdgeInsets.all(AppSpacing.md),
+        child: Row(
+          spacing: AppSpacing.md,
+          children: [
+            _CourseIcon(icon: icon, primary: primary),
+            Expanded(
+              child: _CourseInfo(
+                title: title,
+                studentCount: studentCount,
+                ctaLabel: ctaLabel,
+                primary: primary,
+              ),
             ),
-          ),
-          _CourseAction(primary: primary),
-        ],
+            _CourseAction(primary: primary),
+          ],
+        ),
       ),
     );
   }

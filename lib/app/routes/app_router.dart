@@ -3,8 +3,10 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared/shared.dart';
 import 'package:student_attendance/app/app.dart';
 import 'package:student_attendance/features/auth/auth.dart';
+import 'package:student_attendance/features/lecturer/lecturer.dart';
 import 'package:student_attendance/features/session/session.dart';
 import 'package:student_attendance/features/home/home.dart';
 import 'package:student_attendance/features/splash/splash.dart';
@@ -57,14 +59,23 @@ class AppRouter {
         builder: (context, state) => const HomePage(),
       ),
       GoRoute(
+        path: AppRoutes.lecturerCourseView,
+        builder: (context, state) {
+          final course = state.extra as Course;
+          return CourseViewPage(course: course);
+        },
+      ),
+      GoRoute(
         path: AppRoutes.createSession,
         builder: (context, state) => const CreateSessionPage(),
-
         routes: [
           GoRoute(
             path: 'session-result',
             name: 'session-result',
-            builder: (context, state) => const SessionResultPage(),
+            builder: (context, state) {
+              final result = state.extra as SessionResult;
+              return SessionResultPage(sessionResult: result);
+            },
           ),
         ],
       ),

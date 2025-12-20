@@ -30,9 +30,9 @@ class CreateSessionButton extends StatelessWidget {
       onPressed: isLoading
           ? null
           : () => cubit.createSession(
-              onSuccess: (session, qrPayload) => context.pushNamed(
+              onSuccess: (sessionResult) => context.pushNamed(
                 'session-result',
-                extra: {'session': session, 'qrPayload': qrPayload},
+                extra: sessionResult,
               ),
             ),
     );

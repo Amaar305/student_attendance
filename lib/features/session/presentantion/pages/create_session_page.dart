@@ -16,14 +16,27 @@ class CreateSessionPage extends StatelessWidget {
         closeSessionUseCase: getIt(),
         createOrGetOpenSessionUseCase: getIt(),
         fetchLecturerCoursesUseCase: getIt(),
-      )..fetchLecturerCourses(),
+      ),
       child: const CreateSessionView(),
     );
   }
 }
 
-class CreateSessionView extends StatelessWidget {
+class CreateSessionView extends StatefulWidget {
   const CreateSessionView({super.key});
+
+  @override
+  State<CreateSessionView> createState() => _CreateSessionViewState();
+}
+
+class _CreateSessionViewState extends State<CreateSessionView> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<SessionCubit>().fetchLecturerCourses();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,6 +45,12 @@ class CreateSessionView extends StatelessWidget {
           previous.status != current.status ||
           previous.message != current.message,
       listener: (context, state) {
+        if (state.status.isLoading) {
+          showLoadingOverlay(context);
+        } else {
+          hideLoadingOverlay();
+        }
+
         if (state.status.isError && state.message.isNotEmpty) {
           openSnackbar(SnackbarMessage.error(title: state.message));
         }

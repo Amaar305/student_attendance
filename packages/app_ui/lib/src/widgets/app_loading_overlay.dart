@@ -64,6 +64,7 @@ class _AppLoadingOverlay extends StatelessWidget {
     final colorScheme = theme.colorScheme;
     final primaryColor = primary ?? colorScheme.primary;
     final secondaryColor = secondary ?? colorScheme.secondary;
+    final surfaceTint = colorScheme.surface.withValues(alpha: 0.9);
 
     return Stack(
       children: [
@@ -73,71 +74,76 @@ class _AppLoadingOverlay extends StatelessWidget {
         ),
         Center(
           child: Container(
-            constraints: const BoxConstraints(
-              minWidth: 220,
-              maxWidth: 280,
-            ),
+            constraints: const BoxConstraints(minWidth: 200, maxWidth: 260),
             padding: const EdgeInsets.symmetric(
-              horizontal: AppSpacing.xlg,
-              vertical: AppSpacing.xxlg,
+              horizontal: AppSpacing.lg,
+              vertical: AppSpacing.md,
             ),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(32),
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  primaryColor.withValues(alpha: 0.95),
-                  secondaryColor.withValues(alpha: 0.9),
-                ],
-              ),
+              color: surfaceTint,
+              borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                  color: primaryColor.withValues(alpha: 0.35),
-                  blurRadius: 42,
-                  offset: const Offset(0, 24),
+                  color: Colors.black.withValues(alpha: 0.18),
+                  blurRadius: 28,
+                  offset: const Offset(0, 12),
                 ),
               ],
             ),
-            child: Column(
+            child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                DecoratedBox(
+                Container(
+                  height: 48,
+                  width: 48,
                   decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: RadialGradient(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
                       colors: [
-                        Colors.white.withValues(alpha: 0.35),
-                        Colors.white.withValues(alpha: 0.05),
+                        primaryColor.withValues(alpha: 0.12),
+                        secondaryColor.withValues(alpha: 0.05),
                       ],
                     ),
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  child: SizedBox(
-                    width: 72,
-                    height: 72,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 5.5,
-                      valueColor:
-                          const AlwaysStoppedAnimation<Color>(Colors.white),
-                      backgroundColor: Colors.white.withValues(alpha: 0.25),
-                    ),
+                  padding: const EdgeInsets.all(AppSpacing.sm),
+                  child: CircularProgressIndicator(
+                    strokeWidth: 3,
+                    valueColor: AlwaysStoppedAnimation<Color>(primaryColor),
+                    backgroundColor: primaryColor.withValues(alpha: 0.1),
                   ),
                 ),
-                const SizedBox(height: AppSpacing.lg),
-                Text(
-                  title,
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(height: AppSpacing.xs),
-                Text(
-                  message,
-                  textAlign: TextAlign.center,
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: Colors.white.withValues(alpha: 0.82),
-                    height: 1.4,
+                const SizedBox(width: AppSpacing.md),
+                Expanded(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: theme.textTheme.titleSmall?.copyWith(
+                          color: colorScheme.onSurface,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      const SizedBox(height: AppSpacing.xxs),
+                      AnimatedDefaultTextStyle(
+                        duration: const Duration(milliseconds: 180),
+                        style: theme.textTheme.bodySmall?.copyWith(
+                              color: colorScheme.onSurfaceVariant,
+                              height: 1.4,
+                            ) ??
+                            const TextStyle(),
+                        child: Text(
+                          message,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],

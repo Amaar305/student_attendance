@@ -3,8 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get_it/get_it.dart';
 import 'package:student_attendance/app/cubit/app_cubit.dart';
 import 'package:student_attendance/features/auth/auth.dart';
+import 'package:student_attendance/features/lecturer/lecturer.dart';
 import 'package:student_attendance/features/session/session.dart';
-
 
 GetIt getIt = GetIt.instance;
 
@@ -25,6 +25,7 @@ void initDependencies() async {
   );
 
   _auth();
+  _lecturer();
   _session();
 }
 
@@ -68,6 +69,33 @@ void _login() {
     );
 }
 
+void _lecturer() {
+  getIt
+    ..registerFactory<LecturerRemoteDataSource>(
+      () => LecturerRemoteDataSourceImpl(
+        firebaseFirestore: getIt<FirebaseFirestore>(),
+      ),
+    )
+    ..registerFactory<LecturerRepository>(
+      () => LecturerRepositoryImpl(lecturerRemoteDataSource: getIt()),
+    )
+    ..registerFactory<WatchLecturerCoursesUseCase>(
+      () => WatchLecturerCoursesUseCase(lecturerRepository: getIt()),
+    )
+    ..registerFactory<GetCourseStudentCountUseCase>(
+      () => GetCourseStudentCountUseCase(lecturerRepository: getIt()),
+    )
+    ..registerFactory<WatchSessionAttendanceCountUseCase>(
+      () => WatchSessionAttendanceCountUseCase(lecturerRepository: getIt()),
+    )
+    ..registerFactory<WatchCourseStudentCountUseCase>(
+      () => WatchCourseStudentCountUseCase(lecturerRepository: getIt()),
+    )
+    ..registerFactory<WatchCourseSessionsUseCase>(
+      () => WatchCourseSessionsUseCase(lecturerRepository: getIt()),
+    );
+}
+
 void _session() {
   getIt
     ..registerFactory<SessionRemoteDataSource>(
@@ -79,9 +107,7 @@ void _session() {
     ..registerFactory<BuildSessionQrPayloadUseCase>(
       () => BuildSessionQrPayloadUseCase(getIt()),
     )
-    ..registerFactory<CloseSessionUseCase>(
-      () => CloseSessionUseCase(getIt()),
-    )
+    ..registerFactory<CloseSessionUseCase>(() => CloseSessionUseCase(getIt()))
     ..registerFactory<CreateOrGetOpenSessionUseCase>(
       () => CreateOrGetOpenSessionUseCase(getIt()),
     )

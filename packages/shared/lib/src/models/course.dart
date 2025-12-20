@@ -18,4 +18,6 @@ class Course {
   final String level;
   final int studentCount;
   final DateTime createdAt;
+
+  String get title => '$code - $name';
 }

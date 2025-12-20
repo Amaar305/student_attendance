@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:student_attendance/features/session/session.dart';
 
 class SessionResultPage extends StatelessWidget {
-  const SessionResultPage({super.key});
+  const SessionResultPage({super.key, required this.sessionResult});
+  final SessionResult sessionResult;
 
   @override
   Widget build(BuildContext context) {
@@ -15,13 +16,13 @@ class SessionResultPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            SessionResultHeaderInfo(),
+            SessionResultHeaderInfo(sessionResult: sessionResult),
             Padding(
               padding: const EdgeInsets.all(AppSpacing.lg),
-              child: SessionResultQrCard(),
+              child: SessionResultQrCard(sessionResult: sessionResult),
             ),
 
-            const SessionResultActions(),
+            SessionResultActions(sessionResult: sessionResult),
           ],
         ),
       ),

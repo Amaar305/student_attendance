@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared/shared.dart';
 import 'package:student_attendance/app/cubit/app_cubit.dart';
 import 'package:student_attendance/features/home/home.dart';
+import 'package:student_attendance/features/lecturer/lecturer.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -15,7 +16,7 @@ class HomePage extends StatelessWidget {
 
     final child = switch (user.role) {
       UserRole.student => HomeStudentView(),
-      UserRole.lecturer => HomeLecturerView(),
+      UserRole.lecturer => LecturerHomePage(),
       _ => SizedBox.expand(),
     };
     return child;

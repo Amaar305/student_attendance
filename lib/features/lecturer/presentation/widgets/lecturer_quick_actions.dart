@@ -4,8 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:student_attendance/app/app.dart';
 import 'package:student_attendance/core/common/common.dart';
 
-class HomeLecturerQuickActions extends StatelessWidget {
-  const HomeLecturerQuickActions({super.key});
+class LecturerQuickActions extends StatelessWidget {
+  const LecturerQuickActions({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -1,9 +1,12 @@
 import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 import 'package:student_attendance/core/common/widgets/app_container.dart';
+import 'package:student_attendance/features/session/session.dart';
 
 class SessionResultQrCard extends StatelessWidget {
-  const SessionResultQrCard({super.key});
+  const SessionResultQrCard({super.key, required this.sessionResult});
+  final SessionResult sessionResult;
 
   @override
   Widget build(BuildContext context) {
@@ -14,15 +17,16 @@ class SessionResultQrCard extends StatelessWidget {
         color: AppColors.black,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          spacing: AppSpacing.sm,
+          spacing: AppSpacing.md,
           children: [
-            Icon(
-              Icons.document_scanner_outlined,
-              color: AppColors.brightGrey,
-              size: 100,
+            QrImageView(
+              data: sessionResult.qrPayload,
+              version: QrVersions.auto,
+              size: 120,
+              backgroundColor: AppColors.white,
             ),
             Text(
-              'A4B7-9C1D',
+              sessionResult.session.id,
               style: context.bodyMedium?.copyWith(
                 color: AppColors.emphasizeGrey,
                 height: 1.4,

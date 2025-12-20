@@ -76,7 +76,7 @@ class SessionCubit extends Cubit<SessionState> {
   }
 
   Future<void> createSession({
-    void Function(Session session, String qrPayload)? onSuccess,
+    void Function(SessionResult sessionResult)? onSuccess,
   }) async {
     final startAt = state.startAt;
     final course = state.selectedCourse;
@@ -142,7 +142,13 @@ class SessionCubit extends Cubit<SessionState> {
                 qrPayload: qrPayload,
               ),
             );
-            onSuccess?.call(session, qrPayload);
+            onSuccess?.call(
+              SessionResult(
+                session: session,
+                qrPayload: qrPayload,
+                course: course,
+              ),
+            );
           },
         );
       },
