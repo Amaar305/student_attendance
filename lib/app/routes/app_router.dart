@@ -10,6 +10,7 @@ import 'package:student_attendance/features/lecturer/lecturer.dart';
 import 'package:student_attendance/features/session/session.dart';
 import 'package:student_attendance/features/home/home.dart';
 import 'package:student_attendance/features/splash/splash.dart';
+import 'package:student_attendance/features/student/student.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
 
@@ -78,6 +79,15 @@ class AppRouter {
             },
           ),
         ],
+      ),
+
+      GoRoute(
+        path: AppRoutes.scanAttendance,
+        builder: (context, state) => const ScanAttendancePage(),
+      ),
+      GoRoute(
+        path: AppRoutes.attendanceHistory,
+        builder: (context, state) => const AttendanceHistoryPage(),
       ),
     ],
   );

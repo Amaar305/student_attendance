@@ -1,9 +1,11 @@
 import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:student_attendance/app/app.dart';
 import 'package:student_attendance/core/common/common.dart';
 
-class HomeStudentQuickAction extends StatelessWidget {
-  const HomeStudentQuickAction({super.key});
+class StudentQuickAction extends StatelessWidget {
+  const StudentQuickAction({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +16,7 @@ class HomeStudentQuickAction extends StatelessWidget {
           child: _QuickActionTile(
             icon: Icons.history,
             label: 'View History',
-            onTap: () {},
+            onTap: () => context.push(AppRoutes.attendanceHistory),
           ),
         ),
 

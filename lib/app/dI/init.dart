@@ -5,6 +5,7 @@ import 'package:student_attendance/app/cubit/app_cubit.dart';
 import 'package:student_attendance/features/auth/auth.dart';
 import 'package:student_attendance/features/lecturer/lecturer.dart';
 import 'package:student_attendance/features/session/session.dart';
+import 'package:student_attendance/features/student/student.dart';
 
 GetIt getIt = GetIt.instance;
 
@@ -27,6 +28,7 @@ void initDependencies() async {
   _auth();
   _lecturer();
   _session();
+  _student();
 }
 
 void _auth() {
@@ -113,5 +115,41 @@ void _session() {
     )
     ..registerFactory<FetchLecturerCoursesUseCase>(
       () => FetchLecturerCoursesUseCase(getIt()),
+    );
+}
+
+void _student() {
+  getIt
+    ..registerFactory<StudentRemoteDatasource>(
+      () => StudentRemoteDatasourceImpl(
+        firebaseFirestore: getIt<FirebaseFirestore>(),
+      ),
+    )
+    ..registerFactory<StudentRepository>(
+      () => StudentRepositoryImpl(studentRemoteDatasource: getIt()),
+    )
+    ..registerFactory<EnrollInCourseUseCase>(
+      () => EnrollInCourseUseCase(getIt()),
+    )
+    ..registerFactory<IsStudentEnrolledUseCase>(
+      () => IsStudentEnrolledUseCase(getIt()),
+    )
+    ..registerFactory<WatchEnrolledCourseIdsUseCase>(
+      () => WatchEnrolledCourseIdsUseCase(getIt()),
+    )
+    ..registerFactory<WatchTodaySessionsForStudentUseCase>(
+      () => WatchTodaySessionsForStudentUseCase(getIt()),
+    )
+    ..registerFactory<GetScanPreviewUseCase>(
+      () => GetScanPreviewUseCase(getIt()),
+    )
+    ..registerFactory<ConfirmAttendanceUseCase>(
+      () => ConfirmAttendanceUseCase(getIt()),
+    )
+    ..registerFactory<WatchStudentCourseOptionsUseCase>(
+      () => WatchStudentCourseOptionsUseCase(getIt()),
+    )
+    ..registerFactory<WatchAttendanceHistoryUseCase>(
+      () => WatchAttendanceHistoryUseCase(studentRepository: getIt()),
     );
 }

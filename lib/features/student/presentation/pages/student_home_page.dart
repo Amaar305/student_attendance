@@ -1,17 +1,26 @@
 import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:student_attendance/app/cubit/app_cubit.dart';
-import 'package:student_attendance/features/home/home.dart';
+import 'package:student_attendance/app/app.dart';
+import 'package:student_attendance/features/student/student.dart';
 
-class HomeStudentView extends StatelessWidget {
-  const HomeStudentView({super.key});
+class StudentHomePage extends StatelessWidget {
+  const StudentHomePage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const StudentHomeView();
+  }
+}
+
+class StudentHomeView extends StatelessWidget {
+  const StudentHomeView({super.key});
 
   @override
   Widget build(BuildContext context) {
     return AppScaffold(
       appBar: AppBar(
-        title: HomeAppBarTitle(),
+        title: StudentAppBarTitle(),
         centerTitle: false,
         actions: [
           IconButton(
@@ -28,11 +37,12 @@ class HomeStudentView extends StatelessWidget {
           spacing: AppSpacing.xlg,
           children: [
             ScanQrcodeContainer(),
-            HomeStudentQuickAction(),
-            HomeStudentTodaysClasses(),
+            StudentQuickAction(),
+            StudentTodaysClasses(),
           ],
         ),
       ),
     );
+    
   }
 }

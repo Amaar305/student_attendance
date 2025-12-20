@@ -1,5 +1,7 @@
 import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:student_attendance/app/routes/app_routes.dart';
 import 'package:student_attendance/core/common/common.dart';
 
 class ScanQrcodeContainer extends StatelessWidget {
@@ -66,12 +68,10 @@ class _ScanActionButton extends StatelessWidget {
           horizontal: AppSpacing.lg,
           vertical: AppSpacing.sm,
         ),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         elevation: 0,
       ),
-      onPressed: () {},
+      onPressed: () => context.push(AppRoutes.scanAttendance),
     );
   }
 }
