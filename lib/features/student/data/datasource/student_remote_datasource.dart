@@ -5,9 +5,10 @@ import 'package:shared/shared.dart';
 import 'package:student_attendance/features/student/student.dart';
 
 abstract interface class StudentRemoteDatasource {
+  // Search
+  Stream<List<CourseSearchItem>> watchCourses({String? search});
   Future<void> enrollInCourse({
-    required String courseId,
-      required String courseTitle,
+    required CourseSearchItem course,
     required String studentId,
   });
 
@@ -42,12 +43,16 @@ abstract interface class StudentRemoteDatasource {
     String? courseId,
   });
 
-
-// add this (for "All Courses" dropdown)
+  // add this (for "All Courses" dropdown)
   Stream<List<EnrollmentCourseOption>> watchStudentCourseOptions({
     required String studentId,
   });
 
+  /// Fast lookup of attendance by sessionId(s) using the student's mirror collection.
+  Stream<Map<String, AttendanceStatus>> watchMyAttendanceForSessions({
+    required String studentId,
+    required List<String> sessionIds,
+  });
 }
 
 class StudentRemoteDatasourceImpl implements StudentRemoteDatasource {
@@ -88,6 +93,34 @@ class StudentRemoteDatasourceImpl implements StudentRemoteDatasource {
     final y = d.year.toString().padLeft(4, '0');
     final m = d.month.toString().padLeft(2, '0');
     return '$y-$m';
+  }
+
+  Session _sessionFromDoc(DocumentSnapshot<Map<String, dynamic>> doc) {
+    final data = doc.data()!;
+    return Session(
+      id: doc.id,
+      courseId: (data['courseId'] as String?) ?? '',
+      lecturerId: (data['lecturerId'] as String?) ?? '',
+      dateTimeStart:
+          (data['dateTimeStart'] as Timestamp?)?.toDate() ?? DateTime.now(),
+      dateTimeEnd: (data['dateTimeEnd'] as Timestamp?)?.toDate(),
+      isOpen: (data['isOpen'] as bool?) ?? false,
+      qrToken: (data['qrToken'] as String?) ?? '',
+      attendanceCount: ((data['attendanceCount'] as num?) ?? 0).toInt(),
+      topic: data['topic'] as String?,
+      lateAfterMinutes: (data['lateAfterMinutes'] as num?)?.toInt(),
+    );
+  }
+
+  CourseSearchItem _courseFromDoc(DocumentSnapshot<Map<String, dynamic>> doc) {
+    final d = doc.data()!;
+    return CourseSearchItem(
+      id: doc.id,
+      code: (d['code'] as String?) ?? '',
+      name: (d['name'] as String?) ?? '',
+      lecturerId: (d['lecturerId'] as String?) ?? '',
+      studentCount: ((d['studentCount'] as num?) ?? 0).toInt(),
+    );
   }
 
   // ---------- Scan Preview (READ ONLY) ----------
@@ -330,41 +363,40 @@ class StudentRemoteDatasourceImpl implements StudentRemoteDatasource {
 
   @override
   Future<void> enrollInCourse({
-    required String courseId,
-    required String courseTitle,
+    required CourseSearchItem course,
     required String studentId,
   }) async {
-    final courseRef = _courses.doc(courseId);
-    final studentRef = courseRef.collection('students').doc(studentId);
-    final enrollmentRef =
-        _users.doc(studentId).collection('enrollments').doc(courseId);
-    final userRef = _users.doc(studentId);
+    final courseRef = firebaseFirestore.collection('courses').doc(course.id);
+    final courseStudentRef = courseRef.collection('students').doc(studentId);
 
-    // Transaction ensures count increments only once.
+    final userEnrollRef = _users
+        .doc(studentId)
+        .collection('enrollments')
+        .doc(course.id);
+
     await firebaseFirestore.runTransaction((tx) async {
-      final studentSnap = await tx.get(studentRef);
-      final enrollmentSnap = await tx.get(enrollmentRef);
-      final alreadyEnrolled = studentSnap.exists || enrollmentSnap.exists;
+      // Prevent double enroll using user enrollment doc
+      final existing = await tx.get(userEnrollRef);
+      if (existing.exists) return;
 
-      if (!studentSnap.exists) {
-        tx.set(studentRef, {
-          'studentId': studentId,
-          'addedAt': FieldValue.serverTimestamp(),
-        });
-      }
+      // Create course roster doc (lecturer list)
+      tx.set(courseStudentRef, {
+        'studentId': studentId,
+        'addedAt': FieldValue.serverTimestamp(),
+      });
 
-      if (!enrollmentSnap.exists) {
-        tx.set(enrollmentRef, {
-          'courseId': courseId,
-          'courseTitle':courseTitle,
-          'enrolledAt': FieldValue.serverTimestamp(),
-        });
-      }
+      // Create student enrollment doc (fast access)
+      tx.set(userEnrollRef, {
+        'courseId': course.id,
+        'courseCode': course.code,
+        'courseName': course.name,
+        'courseTitle': course.title,
+        'lecturerId': course.lecturerId,
+        'enrolledAt': FieldValue.serverTimestamp(),
+      });
 
-      if (!alreadyEnrolled) {
-        tx.update(courseRef, {'studentCount': FieldValue.increment(1)});
-        tx.update(userRef, {'courseCount': FieldValue.increment(1)});
-      }
+      // Increment course studentCount
+      tx.update(courseRef, {'studentCount': FieldValue.increment(1)});
     });
   }
 
@@ -373,10 +405,10 @@ class StudentRemoteDatasourceImpl implements StudentRemoteDatasource {
     required String courseId,
     required String studentId,
   }) async {
-    final doc = await _courses
-        .doc(courseId)
-        .collection('students')
+    final doc = await _users
         .doc(studentId)
+        .collection('enrollments')
+        .doc(courseId)
         .get();
     return doc.exists;
   }
@@ -393,10 +425,44 @@ class StudentRemoteDatasourceImpl implements StudentRemoteDatasource {
     required DateTime dayStart,
     required DateTime dayEnd,
   }) {
-    // TODO: implement watchTodaySessionsForStudent
-    throw UnimplementedError();
+    final enrollmentsRef = firebaseFirestore
+        .collection('users')
+        .doc(studentId)
+        .collection('enrollments');
+
+    return enrollmentsRef.snapshots().asyncMap((enrollSnap) async {
+      final courseIds = enrollSnap.docs.map((d) => d.id).toList();
+      if (courseIds.isEmpty) return <Session>[];
+
+      final startTs = Timestamp.fromDate(dayStart);
+      final endTs = Timestamp.fromDate(dayEnd);
+
+      // Firestore whereIn max 10
+      final chunks = <List<String>>[];
+      for (var i = 0; i < courseIds.length; i += 10) {
+        chunks.add(courseIds.sublist(i, (i + 10).clamp(0, courseIds.length)));
+      }
+
+      final futures = chunks.map((chunk) {
+        return firebaseFirestore
+            .collection('sessions')
+            .where('courseId', whereIn: chunk)
+            .where('dateTimeStart', isGreaterThanOrEqualTo: startTs)
+            .where('dateTimeStart', isLessThanOrEqualTo: endTs)
+            .orderBy('dateTimeStart')
+            .get();
+      });
+
+      final snaps = await Future.wait(futures);
+      final docs = snaps.expand((s) => s.docs).toList();
+
+      final sessions = docs.map(_sessionFromDoc).toList()
+        ..sort((a, b) => a.dateTimeStart.compareTo(b.dateTimeStart));
+
+      return sessions;
+    });
   }
-  
+
   @override
   Stream<List<EnrollmentCourseOption>> watchStudentCourseOptions({
     required String studentId,
@@ -426,4 +492,63 @@ class StudentRemoteDatasourceImpl implements StudentRemoteDatasource {
     return '$code: $name';
   }
 
+  @override
+  Stream<Map<String, AttendanceStatus>> watchMyAttendanceForSessions({
+    required String studentId,
+    required List<String> sessionIds,
+  }) {
+    if (sessionIds.isEmpty) {
+      return Stream.value(<String, AttendanceStatus>{});
+    }
+
+    final attendanceRef = firebaseFirestore
+        .collection('users')
+        .doc(studentId)
+        .collection('attendance');
+
+    return attendanceRef.snapshots().map((snap) {
+      final map = <String, AttendanceStatus>{};
+      for (final doc in snap.docs) {
+        if (!sessionIds.contains(doc.id)) continue;
+        final data = doc.data();
+        final s = (data['status'] as String?) ?? 'present';
+        map[doc.id] = s == 'late'
+            ? AttendanceStatus.late
+            : AttendanceStatus.present;
+      }
+      return map;
+    });
+  }
+
+  @override
+  Stream<List<CourseSearchItem>> watchCourses({String? search}) {
+    Query<Map<String, dynamic>> q = firebaseFirestore
+        .collection('courses')
+        .orderBy('createdAt', descending: true);
+
+    // Lightweight search approach:
+    // Firestore doesn't do contains search; we do:
+    // - if search is empty: show latest courses
+    // - else: orderBy code and name is not possible simultaneously without extra fields
+    // Recommended minimal: use "code" exact-ish search + client-side filter for name.
+    //
+    // If you want true search later, add fields:
+    // - searchKeywords: array<string>
+    // or integrate Algolia/Meilisearch.
+    //
+    // For now: fetch latest 50 and filter locally.
+    q = q.limit(50);
+
+    return q.snapshots().map((snap) {
+      var list = snap.docs.map(_courseFromDoc).toList();
+      final term = (search ?? '').trim().toLowerCase();
+      if (term.isNotEmpty) {
+        list = list.where((c) {
+          return c.code.toLowerCase().contains(term) ||
+              c.name.toLowerCase().contains(term);
+        }).toList();
+      }
+      return list;
+    });
+  }
 }

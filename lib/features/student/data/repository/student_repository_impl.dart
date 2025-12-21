@@ -10,15 +10,13 @@ class StudentRepositoryImpl implements StudentRepository {
 
   @override
   Future<Either<Failure, void>> enrollInCourse({
-    required String courseId,
-      required String courseTitle,
+    required CourseSearchItem course,
     required String studentId,
   }) async {
     try {
       await studentRemoteDatasource.enrollInCourse(
-        courseId: courseId,
         studentId: studentId,
-        courseTitle: courseTitle,
+        course: course,
       );
 
       return right(null);
@@ -157,9 +155,10 @@ class StudentRepositoryImpl implements StudentRepository {
       yield Left(ServerFailure(error.toString()));
     }
   }
-  
+
   @override
-  Stream<Either<Failure, List<EnrollmentCourseOption>>> watchStudentCourseOptions({required String studentId}) async* {
+  Stream<Either<Failure, List<EnrollmentCourseOption>>>
+  watchStudentCourseOptions({required String studentId}) async* {
     try {
       await for (final courses
           in studentRemoteDatasource.watchStudentCourseOptions(
@@ -171,6 +170,44 @@ class StudentRepositoryImpl implements StudentRepository {
       yield Left(
         ServerFailure(error.message ?? 'Failed to load course options'),
       );
+    } catch (error) {
+      yield Left(ServerFailure(error.toString()));
+    }
+  }
+
+  @override
+  Stream<Either<Failure, Map<String, AttendanceStatus>>>
+  watchMyAttendanceForSessions({
+    required String studentId,
+    required List<String> sessionIds,
+  }) async* {
+    try {
+      await for (final attendance
+          in studentRemoteDatasource.watchMyAttendanceForSessions(
+            studentId: studentId,
+            sessionIds: sessionIds,
+          )) {
+        yield right(attendance);
+      }
+    } on FirebaseException catch (error) {
+      yield Left(ServerFailure(error.message ?? 'Failed to load attendance'));
+    } catch (error) {
+      yield Left(ServerFailure(error.toString()));
+    }
+  }
+
+  @override
+  Stream<Either<Failure, List<CourseSearchItem>>> watchCourses({
+    String? search,
+  }) async* {
+    try {
+      await for (final courses in studentRemoteDatasource.watchCourses(
+        search: search,
+      )) {
+        yield right(courses);
+      }
+    } on FirebaseException catch (error) {
+      yield Left(ServerFailure(error.message ?? 'Failed to load courses'));
     } catch (error) {
       yield Left(ServerFailure(error.toString()));
     }

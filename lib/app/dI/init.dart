@@ -149,6 +149,12 @@ void _student() {
     ..registerFactory<WatchStudentCourseOptionsUseCase>(
       () => WatchStudentCourseOptionsUseCase(getIt()),
     )
+    ..registerFactory<WatchCoursesUseCase>(
+      () => WatchCoursesUseCase(studentRepository: getIt()),
+    )
+    ..registerFactory<WatchMyAttendanceForSessionsUseCase>(
+      () => WatchMyAttendanceForSessionsUseCase(studentRepository: getIt()),
+    )
     ..registerFactory<WatchAttendanceHistoryUseCase>(
       () => WatchAttendanceHistoryUseCase(studentRepository: getIt()),
     );

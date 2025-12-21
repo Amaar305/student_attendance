@@ -10,21 +10,15 @@ class EnrollInCourseUseCase implements UseCase<void, EnrollInCourseParams> {
   @override
   Future<Either<Failure, void>> call(EnrollInCourseParams param) {
     return _studentRepository.enrollInCourse(
-      courseId: param.courseId,
       studentId: param.studentId,
-      courseTitle: param.courseTitle,
+      course: param.course,
     );
   }
 }
 
 class EnrollInCourseParams {
-  const EnrollInCourseParams({
-    required this.courseId,
-    required this.courseTitle,
-    required this.studentId,
-  });
+  const EnrollInCourseParams({required this.studentId, required this.course});
 
-  final String courseId;
-  final String courseTitle;
+  final CourseSearchItem course;
   final String studentId;
 }

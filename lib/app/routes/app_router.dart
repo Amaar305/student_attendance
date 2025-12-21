@@ -89,6 +89,10 @@ class AppRouter {
         path: AppRoutes.attendanceHistory,
         builder: (context, state) => const AttendanceHistoryPage(),
       ),
+      GoRoute(
+        path: AppRoutes.addCourse,
+        builder: (context, state) => const CourseSearchPage(),
+      ),
     ],
   );
 }

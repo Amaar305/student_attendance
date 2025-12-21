@@ -25,6 +25,8 @@ class AppRoutes {
   /// Attendance History route.
   static const String attendanceHistory = '/attendance-history';
 
+  /// Add course route.
+  static const String addCourse = '/add-course';
 
   /// Routes that should bounce authenticated users back to home.
   static const Set<String> authRedirectBlock = {splash, auth};

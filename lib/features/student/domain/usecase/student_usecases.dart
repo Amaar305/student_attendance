@@ -3,6 +3,8 @@ export 'enroll_in_course_use_case.dart';
 export 'get_scan_preview_use_case.dart';
 export 'is_student_enrolled_use_case.dart';
 export 'watch_attendance_history_use_case.dart';
+export 'watch_courses_use_case.dart';
 export 'watch_enrolled_course_ids_use_case.dart';
+export 'watch_my_attendance_for_sessions_use_case.dart';
 export 'watch_student_course_options_use_case.dart';
 export 'watch_today_sessions_for_student_use_case.dart';

@@ -32,8 +32,9 @@ class AttendanceHistoryCubit extends Cubit<AttendanceHistoryState> {
       WatchStudentCourseOptionsParams(studentId: _user.id),
     );
 
-    _coursesSub = res.listen(
-      (event) => event.fold(
+    _coursesSub = res.listen((event) {
+      if (isClosed) return;
+      event.fold(
         (failure) =>
             emit(state.copyWith(loading: false, errorMessage: failure.message)),
         (courses) {
@@ -45,8 +46,8 @@ class AttendanceHistoryCubit extends Cubit<AttendanceHistoryState> {
             ),
           );
         },
-      ),
-    );
+      );
+    });
 
     // Start history stream
     _resubscribeHistory();
