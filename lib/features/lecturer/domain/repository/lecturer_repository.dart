@@ -21,4 +21,11 @@ abstract interface class LecturerRepository {
   Future<Either<Failure, int>> getCourseStudentCount({
     required String courseId,
   });
+
+  Future<Either<Failure, void>> addCourse({
+    required String lecturerId,
+    required String code,
+    required String name,
+    required String level,
+  });
 }

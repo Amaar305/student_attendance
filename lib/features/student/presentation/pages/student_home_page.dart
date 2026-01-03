@@ -35,7 +35,10 @@ class StudentHomeView extends StatelessWidget {
         actions: [
           // TODO: Customize this button to make it for "Add Course"
           IconButton(
-            onPressed: () => context.push(AppRoutes.addCourse),
+            onPressed: () {
+              // context.push(AppRoutes.addCourse);
+              context.read<AppCubit>().signOut();
+            },
             icon: Icon(Icons.add),
           ),
         ],

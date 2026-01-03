@@ -21,10 +21,11 @@ class LecturerQuickActions extends StatelessWidget {
           ),
         ),
 
-        const Expanded(
+        Expanded(
           child: _LecturerQuickAction(
             icon: Icons.sensors_sharp,
             label: 'Active Session',
+            onTap: () => context.push(AppRoutes.activeSessions),
           ),
         ),
 

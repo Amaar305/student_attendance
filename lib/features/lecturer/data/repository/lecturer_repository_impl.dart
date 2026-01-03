@@ -98,4 +98,27 @@ class LecturerRepositoryImpl implements LecturerRepository {
       yield Left(ServerFailure(error.toString()));
     }
   }
+
+  @override
+  Future<Either<Failure, void>> addCourse({
+    required String lecturerId,
+    required String code,
+    required String name,
+    required String level,
+  }) async {
+    try {
+      final courses = await lecturerRemoteDataSource.addCourse(
+        lecturerId: lecturerId,
+        code: code,
+        name: name,
+        level: level,
+      );
+
+      return Right(courses);
+    } on FirebaseException catch (error) {
+      return Left(ServerFailure(error.message ?? 'Failed to load courses'));
+    } catch (error) {
+      return Left(ServerFailure(error.toString()));
+    }
+  }
 }

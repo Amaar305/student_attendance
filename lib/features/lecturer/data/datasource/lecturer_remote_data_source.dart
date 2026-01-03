@@ -11,6 +11,13 @@ abstract interface class LecturerRemoteDataSource {
   Future<int> getCourseStudentCount({required String courseId});
 
   Stream<int> watchCourseStudentCount({required String courseId}); // preferred
+
+  Future<void> addCourse({
+    required String lecturerId,
+    required String code,
+    required String name,
+    required String level,
+  });
 }
 
 class LecturerRemoteDataSourceImpl implements LecturerRemoteDataSource {
@@ -98,5 +105,22 @@ class LecturerRemoteDataSourceImpl implements LecturerRemoteDataSource {
           final data = doc.data();
           return ((data?['studentCount'] as num?) ?? 0).toInt();
         });
+  }
+
+  @override
+  Future<void> addCourse({
+    required String lecturerId,
+    required String code,
+    required String name,
+    required String level,
+  }) async {
+    await _courses.add({
+      'lecturerId': lecturerId,
+      'code': code,
+      'name': name,
+      'level': level,
+      'studentCount': 0,
+      'createdAt': FieldValue.serverTimestamp(),
+    });
   }
 }

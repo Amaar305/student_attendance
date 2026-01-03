@@ -29,7 +29,19 @@ class LecturerHomeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AppScaffold(
-      appBar: AppBar(title: Text('Dashboard')),
+      appBar: AppBar(
+        title: Text('Dashboard'),
+        actions: [
+          TextButton.icon(
+            onPressed: () {
+              // context.push(AppRoutes.addCourse);
+              context.read<AppCubit>().signOut();
+            },
+            label: Text('Add Course'),
+            icon: Icon(Icons.add),
+          ),
+        ],
+      ),
       body: BlocListener<LecturerHomeBloc, LecturerHomeState>(
         listenWhen: (previous, current) =>
             previous.status != current.status ||
@@ -89,6 +101,7 @@ class LecturerHomeCourses extends StatelessWidget {
             studentCount: course.studentCount,
             onTap: () =>
                 context.push(AppRoutes.lecturerCourseView, extra: course),
+            icon: Icons.school_outlined,
           );
         }),
       ],

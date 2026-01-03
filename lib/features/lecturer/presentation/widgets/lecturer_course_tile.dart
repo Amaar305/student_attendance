@@ -21,7 +21,7 @@ class LecturerCourseTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const primary = AppColors.primaryDarkBlue;
-    return Tappable.scaled(
+    return Tappable.faded(
       onTap: onTap,
       child: AppContainer(
         asTitle: true,

@@ -90,8 +90,16 @@ class AppRouter {
         builder: (context, state) => const AttendanceHistoryPage(),
       ),
       GoRoute(
-        path: AppRoutes.addCourse,
+        path: AppRoutes.enrollCourse,
         builder: (context, state) => const CourseSearchPage(),
+      ),
+      GoRoute(
+        path: AppRoutes.addCourse,
+        builder: (context, state) => const AddCoursePage(),
+      ),
+      GoRoute(
+        path: AppRoutes.activeSessions,
+        builder: (context, state) => const ActiveSessionsPage(),
       ),
     ],
   );
