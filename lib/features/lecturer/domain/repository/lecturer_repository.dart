@@ -1,5 +1,6 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:shared/shared.dart';
+import 'package:student_attendance/features/lecturer/domain/entities/session_student_attendance.dart';
 
 abstract interface class LecturerRepository {
   Stream<Either<Failure, List<Course>>> watchLecturerCourses({
@@ -20,6 +21,12 @@ abstract interface class LecturerRepository {
 
   Future<Either<Failure, int>> getCourseStudentCount({
     required String courseId,
+  });
+
+  Future<Either<Failure, List<SessionStudentAttendance>>>
+  getSessionStudentAttendance({
+    required String courseId,
+    required String sessionId,
   });
 
   Future<Either<Failure, void>> addCourse({

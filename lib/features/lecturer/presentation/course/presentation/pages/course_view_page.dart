@@ -49,7 +49,7 @@ class CourseView extends StatelessWidget {
             children: [
               CourseStatSection(),
               CourseSegmentedToggle(),
-              Expanded(child: CourseAttendenceSection()),
+              Expanded(child: CourseAttendenceSection(course: course)),
             ],
           ),
         ),

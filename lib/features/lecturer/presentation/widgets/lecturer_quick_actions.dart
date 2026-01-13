@@ -29,12 +29,12 @@ class LecturerQuickActions extends StatelessWidget {
           ),
         ),
 
-        const Expanded(
-          child: _LecturerQuickAction(
-            icon: Icons.bar_chart_outlined,
-            label: 'View Reports',
-          ),
-        ),
+        // const Expanded(
+        //   child: _LecturerQuickAction(
+        //     icon: Icons.bar_chart_outlined,
+        //     label: 'View Reports',
+        //   ),
+        // ),
       ],
     );
   }

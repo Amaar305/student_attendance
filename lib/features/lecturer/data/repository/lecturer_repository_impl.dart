@@ -121,4 +121,27 @@ class LecturerRepositoryImpl implements LecturerRepository {
       return Left(ServerFailure(error.toString()));
     }
   }
+
+  @override
+  Future<Either<Failure, List<SessionStudentAttendance>>>
+  getSessionStudentAttendance({
+    required String courseId,
+    required String sessionId,
+  }) async {
+    try {
+      final students =
+          await lecturerRemoteDataSource.getSessionStudentAttendance(
+            courseId: courseId,
+            sessionId: sessionId,
+          );
+
+      return Right(students);
+    } on FirebaseException catch (error) {
+      return Left(
+        ServerFailure(error.message ?? 'Failed to load session attendance'),
+      );
+    } catch (error) {
+      return Left(ServerFailure(error.toString()));
+    }
+  }
 }

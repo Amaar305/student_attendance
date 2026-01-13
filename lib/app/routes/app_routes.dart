@@ -34,6 +34,9 @@ class AppRoutes {
   /// Active sessions route.
   static const String activeSessions = '/active-sessions';
 
+  /// Session details route.
+  static const String sessionDetails = '/session-details';
+
   /// Routes that should bounce authenticated users back to home.
   static const Set<String> authRedirectBlock = {splash, auth};
 }

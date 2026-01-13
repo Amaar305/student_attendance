@@ -1,11 +1,21 @@
+import 'dart:async';
+
 import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:go_router/go_router.dart';
+import 'package:student_attendance/app/app.dart';
+import 'package:student_attendance/app/routes/app_routes.dart';
 import 'package:student_attendance/features/lecturer/presentation/course/course.dart';
+import 'package:student_attendance/features/lecturer/presentation/session_details/session_details.dart';
+import 'package:student_attendance/features/lecturer/domain/usecase/get_session_student_attendance_use_case.dart';
+import 'package:shared/shared.dart';
 
 class CourseAttendenceSection extends StatelessWidget {
-  const CourseAttendenceSection({super.key});
+  const CourseAttendenceSection({super.key, required this.course});
+
+  final Course course;
 
   @override
   Widget build(BuildContext context) {
@@ -46,8 +56,56 @@ class CourseAttendenceSection extends StatelessWidget {
           date: date,
           time: time,
           fraction: fraction,
+          onTap: () =>
+              unawaited(_openSessionDetails(context, course, session)),
         );
       },
+    );
+  }
+}
+
+Future<void> _openSessionDetails(
+  BuildContext context,
+  Course course,
+  Session session,
+) async {
+  showLoadingOverlay(
+    context,
+    title: 'Loading session',
+    message: 'Fetching enrolled students...',
+  );
+  try {
+    final result =
+        await getIt<GetSessionStudentAttendanceUseCase>()(
+          GetSessionStudentAttendanceParams(
+            courseId: course.id,
+            sessionId: session.id,
+          ),
+        );
+    if (!context.mounted) {
+      hideLoadingOverlay();
+      return;
+    }
+    hideLoadingOverlay();
+    result.fold(
+      (failure) => openSnackbar(SnackbarMessage.error(title: failure.message)),
+      (students) => context.push(
+        AppRoutes.sessionDetails,
+        extra: SessionDetailsArgs(
+          session: session,
+          course: course,
+          students: students,
+        ),
+      ),
+    );
+  } catch (_) {
+    if (!context.mounted) {
+      hideLoadingOverlay();
+      return;
+    }
+    hideLoadingOverlay();
+    openSnackbar(
+      SnackbarMessage.error(title: 'Failed to load session details.'),
     );
   }
 }

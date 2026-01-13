@@ -8,6 +8,7 @@ class AttendanceRow extends StatelessWidget {
   final String date;
   final String time;
   final String fraction;
+  final VoidCallback? onTap;
 
   const AttendanceRow({
     super.key,
@@ -16,6 +17,7 @@ class AttendanceRow extends StatelessWidget {
     required this.date,
     required this.time,
     required this.fraction,
+    this.onTap,
   });
 
   @override
@@ -26,103 +28,106 @@ class AttendanceRow extends StatelessWidget {
       offset: const Offset(0, 8),
     );
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              ringColor.withValues(alpha: 0.08),
-              const Color(0xFFF8FAFC),
-            ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
+    return Tappable.faded(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                ringColor.withValues(alpha: 0.08),
+                const Color(0xFFF8FAFC),
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(18),
+            border: Border.all(color: const Color(0xFFE5E7EB)),
+            boxShadow: [subtleShadow],
           ),
-          borderRadius: BorderRadius.circular(18),
-          border: Border.all(color: const Color(0xFFE5E7EB)),
-          boxShadow: [subtleShadow],
-        ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-          child: Row(
-            children: [
-              _RingPercent(percent: percent, ringColor: ringColor),
-              Gap.h(AppSpacing.md),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  spacing: 6,
-                  children: [
-                    Text(
-                      date,
-                      style: const TextStyle(
-                        fontWeight: AppFontWeight.semiBold,
-                        color: Color(0xFF0F172A),
-                        letterSpacing: -0.2,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            child: Row(
+              children: [
+                _RingPercent(percent: percent, ringColor: ringColor),
+                Gap.h(AppSpacing.md),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    spacing: 6,
+                    children: [
+                      Text(
+                        date,
+                        style: const TextStyle(
+                          fontWeight: AppFontWeight.semiBold,
+                          color: Color(0xFF0F172A),
+                          letterSpacing: -0.2,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    Row(
-                      spacing: AppSpacing.xs,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          Icons.schedule_rounded,
-                          size: 15,
-                          color: Colors.grey.shade500,
-                        ),
-
-                        Expanded(
-                          child: Text(
-                            time,
-                            style: const TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                              color: Color(0xFF6B7280),
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.clip,
+                      Row(
+                        spacing: AppSpacing.xs,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.schedule_rounded,
+                            size: 15,
+                            color: Colors.grey.shade500,
                           ),
-                        ),
-                      ],
-                    ),
-                  ],
+
+                          Expanded(
+                            child: Text(
+                              time,
+                              style: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xFF6B7280),
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.clip,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              Flexible(
-                child: Align(
-                  alignment: Alignment.centerRight,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 10,
-                    ),
-                    decoration: BoxDecoration(
-                      color: ringColor.withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(14),
-                    ),
-                    child: FittedBox(
-                      fit: BoxFit.scaleDown,
-                      child: Text(
-                        fraction,
-                        style: TextStyle(
-                          fontWeight: FontWeight.w700,
-                          color: ringColor,
+                Flexible(
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 10,
+                      ),
+                      decoration: BoxDecoration(
+                        color: ringColor.withValues(alpha: 0.12),
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text(
+                          fraction,
+                          style: TextStyle(
+                            fontWeight: FontWeight.w700,
+                            color: ringColor,
+                          ),
                         ),
                       ),
                     ),
                   ),
                 ),
-              ),
-              const Gap.h(AppSpacing.xs),
-              const Icon(
-                Icons.chevron_right_rounded,
-                size: 25,
-                color: Color(0xFF9CA3AF),
-              ),
-            ],
+                const Gap.h(AppSpacing.xs),
+                const Icon(
+                  Icons.chevron_right_rounded,
+                  size: 25,
+                  color: Color(0xFF9CA3AF),
+                ),
+              ],
+            ),
           ),
         ),
       ),

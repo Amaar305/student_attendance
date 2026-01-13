@@ -101,6 +101,17 @@ class AppRouter {
         path: AppRoutes.activeSessions,
         builder: (context, state) => const ActiveSessionsPage(),
       ),
+      GoRoute(
+        path: AppRoutes.sessionDetails,
+        builder: (context, state) {
+          final args = state.extra as SessionDetailsArgs;
+          return SessionDetailsPage(
+            session: args.session,
+            course: args.course,
+            students: args.students,
+          );
+        },
+      ),
     ],
   );
 }

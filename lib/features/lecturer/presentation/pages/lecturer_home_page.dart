@@ -34,11 +34,18 @@ class LecturerHomeView extends StatelessWidget {
         actions: [
           TextButton.icon(
             onPressed: () {
-              // context.push(AppRoutes.addCourse);
-              context.read<AppCubit>().signOut();
+              context.push(AppRoutes.addCourse);
+              // context.read<AppCubit>().signOut();
             },
             label: Text('Add Course'),
             icon: Icon(Icons.add),
+          ),
+          TextButton.icon(
+            onPressed: () {
+              context.read<AppCubit>().signOut();
+            },
+            label: Text('Logout'),
+            icon: Icon(Icons.logout),
           ),
         ],
       ),
