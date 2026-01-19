@@ -112,6 +112,10 @@ class AppRouter {
           );
         },
       ),
+      GoRoute(
+        path: AppRoutes.myStudents,
+        builder: (context, state) => const MyStudentsPage(),
+      ),
     ],
   );
 }

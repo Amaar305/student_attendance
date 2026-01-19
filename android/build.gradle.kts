@@ -1,3 +1,5 @@
+// import com.android.build.gradle.LibraryExtension
+
 allprojects {
     repositories {
         google()
@@ -18,6 +20,16 @@ subprojects {
 subprojects {
     project.evaluationDependsOn(":app")
 }
+
+// subprojects {
+//     plugins.withId("com.android.library") {
+//         extensions.configure<LibraryExtension>("android") {
+//             if (namespace.isNullOrBlank()) {
+//                 namespace = project.group.toString()
+//             }
+//         }
+//     }
+// }
 
 tasks.register<Delete>("clean") {
     delete(rootProject.layout.buildDirectory)

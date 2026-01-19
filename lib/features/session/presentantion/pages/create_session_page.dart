@@ -56,7 +56,7 @@ class _CreateSessionViewState extends State<CreateSessionView> {
         }
       },
       child: AppScaffold(
-        appBar: AppBar(title: Text('Create Session')),
+        appBar: AppBar(title: Text('Create Class')),
         body: AppConstrainedScrollView(
           padding: EdgeInsets.all(AppSpacing.lg),
           child: Column(

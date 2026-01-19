@@ -1,9 +1,14 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:shared/shared.dart';
+import 'package:student_attendance/features/lecturer/domain/entities/course_student.dart';
 import 'package:student_attendance/features/lecturer/domain/entities/session_student_attendance.dart';
 
 abstract interface class LecturerRepository {
   Stream<Either<Failure, List<Course>>> watchLecturerCourses({
+    required String lecturerId,
+  });
+
+  Stream<Either<Failure, List<CourseStudent>>> watchLecturerStudents({
     required String lecturerId,
   });
 

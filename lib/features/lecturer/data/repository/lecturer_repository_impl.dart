@@ -26,6 +26,24 @@ class LecturerRepositoryImpl implements LecturerRepository {
   }
 
   @override
+  Stream<Either<Failure, List<CourseStudent>>> watchLecturerStudents({
+    required String lecturerId,
+  }) async* {
+    try {
+      await for (final students
+          in lecturerRemoteDataSource.watchLecturerStudents(
+            lecturerId: lecturerId,
+          )) {
+        yield right(students);
+      }
+    } on FirebaseException catch (error) {
+      yield Left(ServerFailure(error.message ?? 'Failed to load students'));
+    } catch (error) {
+      yield Left(ServerFailure(error.toString()));
+    }
+  }
+
+  @override
   Future<Either<Failure, int>> getCourseStudentCount({
     required String courseId,
   }) async {

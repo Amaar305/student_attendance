@@ -6,7 +6,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:go_router/go_router.dart';
 import 'package:student_attendance/app/app.dart';
-import 'package:student_attendance/app/routes/app_routes.dart';
 import 'package:student_attendance/features/lecturer/presentation/course/course.dart';
 import 'package:student_attendance/features/lecturer/presentation/session_details/session_details.dart';
 import 'package:student_attendance/features/lecturer/domain/usecase/get_session_student_attendance_use_case.dart';

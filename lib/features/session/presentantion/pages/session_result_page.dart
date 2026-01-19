@@ -9,7 +9,7 @@ class SessionResultPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AppScaffold(
-      appBar: AppBar(title: Text('Session QR Code')),
+      appBar: AppBar(title: Text('Class QR Code')),
       body: AppConstrainedScrollView(
         padding: EdgeInsets.all(AppSpacing.lg),
         child: Column(

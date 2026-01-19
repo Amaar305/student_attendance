@@ -16,7 +16,7 @@ class LecturerQuickActions extends StatelessWidget {
         Expanded(
           child: _LecturerQuickAction(
             icon: Icons.add_circle,
-            label: 'Create Session',
+            label: 'Start Class',
             onTap: () => context.push(AppRoutes.createSession),
           ),
         ),
@@ -24,17 +24,18 @@ class LecturerQuickActions extends StatelessWidget {
         Expanded(
           child: _LecturerQuickAction(
             icon: Icons.sensors_sharp,
-            label: 'Active Session',
+            label: 'Active Classes',
             onTap: () => context.push(AppRoutes.activeSessions),
           ),
         ),
 
-        // const Expanded(
-        //   child: _LecturerQuickAction(
-        //     icon: Icons.bar_chart_outlined,
-        //     label: 'View Reports',
-        //   ),
-        // ),
+        Expanded(
+          child: _LecturerQuickAction(
+            icon: Icons.groups_outlined,
+            label: 'My Students',
+            onTap: () => context.push(AppRoutes.myStudents),
+          ),
+        ),
       ],
     );
   }

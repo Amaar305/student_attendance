@@ -84,6 +84,9 @@ void _lecturer() {
     ..registerFactory<WatchLecturerCoursesUseCase>(
       () => WatchLecturerCoursesUseCase(lecturerRepository: getIt()),
     )
+    ..registerFactory<WatchLecturerStudentsUseCase>(
+      () => WatchLecturerStudentsUseCase(lecturerRepository: getIt()),
+    )
     ..registerFactory<GetCourseStudentCountUseCase>(
       () => GetCourseStudentCountUseCase(lecturerRepository: getIt()),
     )
