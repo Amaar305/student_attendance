@@ -28,7 +28,7 @@ class ActiveSessionsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AppScaffold(
-      appBar: AppBar(title: const Text('Active Sessions'), centerTitle: true),
+      appBar: AppBar(title: const Text('Active Classes'), centerTitle: true),
       body: BlocConsumer<ActiveSessionsCubit, ActiveSessionsState>(
         listenWhen: (previous, current) =>
             previous.errorMessage != current.errorMessage,
@@ -44,7 +44,7 @@ class ActiveSessionsView extends StatelessWidget {
           }
 
           if (state.sessions.isEmpty) {
-            return const Center(child: Text('No active sessions'));
+            return const Center(child: Text('No active classes'));
           }
 
           return ListView.separated(
